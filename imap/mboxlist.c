@@ -2297,7 +2297,7 @@ static int find_p(void *rockp,
 
     if (!rock->isadmin && !config_getswitch(IMAPOPT_CROSSDOMAINS)) {
         /* don't list mailboxes outside of the default domain */
-        if (strcmpsafe(rock->domain, mbname_domain(rock->mbname)))
+        if (config_virtdomains && strcmpsafe(rock->domain, mbname_domain(rock->mbname)))
             goto nomatch;
     }
 

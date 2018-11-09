@@ -344,7 +344,7 @@ EXPORTED mbname_t *mbname_from_userid(const char *userid)
     mbname->userid = xstrdup(userid); // may as well cache it
 
     p = strchr(userid, '@');
-    if (p) {
+    if (config_virtdomains && p) {
         mbname->localpart = xstrndup(userid, p - userid);
         const char *domain = p+1;
         mbname->domain = strcmpsafe(domain, config_defdomain) ? xstrdupnull(domain) : NULL;
@@ -367,12 +367,10 @@ EXPORTED mbname_t *mbname_from_recipient(const char *recipient, const struct nam
     mbname->extns = ns;
 
     const char *at = strchr(recipient, '@');
-    if (at) {
+    if (config_virtdomains && at) {
         mbname->localpart = xstrndup(recipient, at - recipient);
         const char *domain = at+1;
-        if (config_virtdomains && strcmpsafe(domain, config_defdomain))
-            mbname->domain = xstrdupnull(domain);
-        /* otherwise we ignore domain entirely */
+        mbname->domain = strcmpsafe(domain, config_defdomain) ? xstrdupnull(domain) : NULL;
     }
     else {
         mbname->localpart = xstrdup(recipient);
